@@ -31,6 +31,7 @@ export default {
         joinDate: null,
         profileImage: null,
         respositories: [],
+        userLanguages: [],
         followers: null,
         following: null
       },
@@ -51,6 +52,11 @@ export default {
         const repositories = await response.json()
         this.userData.repositories = repositories
         console.log(this.userData.repositories)
+        for (let i = 0; i < this.userData.repositories.length; i++) {
+          if (this.userData.repositories[i].language != null) {
+            this.userData.userLanguages.push(this.userData.repositories[i].language)
+          }
+        }
         this.fetchUserStats()
       }
     },
@@ -58,20 +64,14 @@ export default {
       const url = 'https://api.github.com/users/' + this.userData.username
       const response = await fetch(url)
       const userInfo = await response.json()
-      console.log(userInfo)
       this.setUserStats(userInfo)
     },
     setUserStats: function (userStats) {
       this.userData.name = userStats.name
-      console.log(this.userData.name)
       this.userData.followers = userStats.followers
-      console.log(this.userData.followers)
       this.userData.following = userStats.following
-      console.log(this.userData.following)
       this.userData.profileImage = userStats.avatar_url
-      console.log(this.userData.profileImage)
       this.userData.joinDate = userStats.created_at.split('T', 1)[0] // This should work for the date format GitHub presents in its API
-      console.log(this.userData.joinDate)
     },
     getNumRepos: function () {
       return this.userData.repositories.length
