@@ -2,7 +2,8 @@
 node_modules
 /dist
 .eslintrc.js
-.browserlistrc
+.browserslistrc
+.editorconfig
 
 
 # local env files
