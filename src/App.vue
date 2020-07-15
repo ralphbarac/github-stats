@@ -1,37 +1,51 @@
 <template>
   <div id="app">
     <div class="container">
-      <div class="header">
-        <h1 class="title">Github Stats</h1>
-      </div>
-      <div class="input-form-wrapper">
-        <form class="input-form" v-if='!isSubmitted'>
-          <input type='text' id='username' class="username-input" v-model='userData.username'>
-          <button @click.prevent='fetchUserRepos' class="submit-input">Submit</button>
-        </form>
-      <transition name="slide">
-        <h3 class="username-error" v-if='usernameError'>Sorry, that username does not exist or has no public repositories.</h3>
-      </transition>
-      </div>
-      <div class="footer">
-        <p>footer text here</p>
-      </div>
+      <gs-search v-if='!isSubmitted' :usernameError='usernameError'></gs-search>
+      <gs-profile :userData='userData' v-else></gs-profile>
     </div>
   </div>
 </template>
 
 <script>
+import { eventBus } from './main'
 
 export default {
-  data () {
+  computed: {
+    calcLanguagePerc: function () {
+      const languageArray = []
+      for (let i = 0; i < this.userData.repositories.length; i++) {
+        if (this.userData.repositories[i].language != null) {
+          languageArray.push(this.userData.repositories[i].language)
+        }
+      }
+      const languageDict = {}
+      for (let i = 0; i < languageArray.length; i++) {
+        if (languageDict[languageArray[i]] != null) {
+          languageDict[languageArray[i]] = languageDict[languageArray[i]] + 1
+        } else {
+          languageDict[languageArray[i]] = 1
+        }
+      }
+      // Now converting to percentages
+      let sum = 0
+      for (const key in languageDict) {
+        sum += parseFloat(languageDict[key])
+      }
+      for (const key in languageDict) {
+        languageDict[key] = (languageDict[key] / sum) * 100
+      }
+      return languageDict
+    }
+  },
+  data: function () {
     return {
       userData: {
-        username: '',
         name: '',
-        joinDate: null,
-        profileImage: null,
-        respositories: [],
-        userLanguages: [],
+        username: '',
+        joinDate: '',
+        profileImage: '',
+        repositories: [],
         followers: null,
         following: null
       },
@@ -39,95 +53,37 @@ export default {
       usernameError: false
     }
   },
-  methods: {
-    async fetchUserRepos () {
-      const url = 'https://api.github.com/users/' + this.userData.username + '/repos'
-      const response = await fetch(url)
-      if (!response.ok) {
-        this.usernameError = true
-        return null
-      } else {
-        this.isSubmitted = true
-        this.usernameError = false
-        const repositories = await response.json()
-        this.userData.repositories = repositories
-        console.log(this.userData.repositories)
-        for (let i = 0; i < this.userData.repositories.length; i++) {
-          if (this.userData.repositories[i].language != null) {
-            this.userData.userLanguages.push(this.userData.repositories[i].language)
-          }
-        }
-        this.fetchUserStats()
-      }
-    },
-    async fetchUserStats () {
-      const url = 'https://api.github.com/users/' + this.userData.username
-      const response = await fetch(url)
-      const userInfo = await response.json()
-      this.setUserStats(userInfo)
-    },
-    setUserStats: function (userStats) {
-      this.userData.name = userStats.name
-      this.userData.followers = userStats.followers
-      this.userData.following = userStats.following
-      this.userData.profileImage = userStats.avatar_url
-      this.userData.joinDate = userStats.created_at.split('T', 1)[0] // This should work for the date format GitHub presents in its API
-    },
-    getNumRepos: function () {
-      return this.userData.repositories.length
-    }
+  created () {
+    eventBus.$on('userSearchError', (bool) => {
+      this.usernameError = bool
+    })
+
+    eventBus.$on('submitChange', (array) => {
+      this.isSubmitted = array[0]
+      this.userData.username = array[1]
+    })
+
+    eventBus.$on('repos', (repositories) => {
+      this.userData.repositories = repositories
+    })
+
+    eventBus.$on('userDataInformation', (data) => {
+      this.userData.name = data.name
+      this.userData.joinDate = data.created_at.split('T', 1)[0]
+      this.userData.followers = data.followers
+      this.userData.following = data.following
+      this.userData.profileImage = data.avatar_url
+    })
   }
 }
 </script>
 
 <style lang="scss">
-  /* Variables */
+/* Variables */
   :root {
     --main-bg-color: #d3d3d3;
   }
-  /* Animations*/
-  .fade-enter {
-      opacity: 0;
-  }
-
-  .fade-enter-active {
-    transition: opacity 1s;
-  }
-
-  .fade-leave {
-
-  }
-
-  .fade-leave-active {
-    opacity: 0;
-  }
-
-  .slide-enter {
-
-  }
-
-  .slide-enter-active {
-    animation: slide-in 1s ease-out forwards;
-  }
-
-  .slide-leave {
-
-  }
-
-  .slide-leave-active {
-
-  }
-
-  @keyframes slide-in {
-    from {
-      transform: translateY(20px);
-    }
-    to {
-      transform: translateY(0);
-    }
-  }
-
-  /* basic reset since some browsers add padding automatically */
+ /* basic reset since some browsers add padding automatically */
   *,
   *::after,
   *::before {
@@ -147,68 +103,6 @@ export default {
     box-sizing: border-box;
     margin: 0 auto;
     background-color: var(--main-bg-color);
-  }
-  .container {
-    height: 100vh;
-    width: 100vw;
-    display: flex;
-    margin: 0 auto;
-    justify-content: space-between;
-    align-items: center;
-    flex-direction: column;
-  }
-
-  .header {
-    height: 15%;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .title {
-    font-size: 4rem;
-  }
-
-  .input-form-wrapper {
-    height: 40%;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-  }
-
-  .input-form {
-    height: 3rem;
-    position: fixed;
-    width: 60%;
-    display: flex;
-    justify-content: center;
-  }
-
-  .username-input {
-    height: 100%;
-    width: 60%;
-    padding-left: 0.3rem;
-    border-radius: 0.5rem;
-    font-size: 2rem;
-  }
-
-  .submit-input {
-    height: 100%;
-    margin-left: 0.5rem;
-    padding: 0.3rem;
-    border-radius: 0.5rem;
-    background-color: white;
-    cursor: pointer;
-  }
-
-  .username-error {
-    width: 36%;
-    margin-top: 8rem;
-    color: white;
-    font-size: 2rem;
   }
 
 </style>
