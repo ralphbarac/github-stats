@@ -3,7 +3,7 @@
   <div class="section-repositories">
     <h1 class="section-title">Repositories</h1>
     <div class="repositories">
-      <div class="repo-card" v-for='repo in repoData' :key='repo.name'>
+      <a :href="'https:\/\/github.com/' + repo.owner.login + '/' + repo.name" class="repo-card" v-for='repo in repoData' :key='repo.name'>
         <h2 class="repo-card-name">{{ repo.name }}</h2>
         <p class="repo-card-description">{{ repo.description }}</p>
         <div class="repo-card-info">
@@ -11,7 +11,7 @@
           <p class="repo-card-stars"><img class="star-icon" height='15px' width='15px' src="https://img.icons8.com/material-outlined/24/000000/star--v2.png"/>{{ repo.stargazers_count }}</p>
           <p class="repo-card-size">{{ repo.size }} KB</p>
         </div>
-      </div>
+      </a>
     </div>
   </div>
 </div>
@@ -69,6 +69,8 @@ export default {
   justify-content: space-between;
   flex-direction: column;
   color: var(--accent-three-color);
+  text-decoration: none;
+  cursor: pointer;
 }
 
 .repo-card-name {

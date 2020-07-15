@@ -1,6 +1,9 @@
 <template>
 <div>
   <div class="user-account-overview">
+    <nav class="nav">
+      <button class='back-button' @click=submitChange()>Home</button>
+    </nav>
     <img :src='userData.profileImage' alt="" class="image-container">
     <h1 class="user-name">{{ userData.name }}</h1>
     <h2 class="github-link"><a :href="'https:\/\/github.com/' + userData.username">@{{ userData.username }}</a></h2>
@@ -16,17 +19,23 @@
 </template>
 
 <script>
+import { eventBus } from './main'
+
 export default {
   props: {
     userData: {
       type: Object
+    }
+  },
+  methods: {
+    submitChange: function () {
+      eventBus.$emit('submitChange', false)
     }
   }
 }
 </script>
 
 <style scoped>
-
 .user-account-overview {
   height: 40rem;
   margin-top: 8rem;
@@ -35,6 +44,24 @@ export default {
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
+}
+
+.nav {
+  width: 80vw;
+  display: flex;
+}
+
+.back-button {
+  background-color: var(--main-bg-color);
+  border: none;
+  text-decoration: none;
+  font-size: 2rem;
+  color: var(--title-font-color);
+}
+
+.back-button:hover {
+  color: var(--accent-three-color);
+  cursor: pointer;
 }
 
 .user-name {

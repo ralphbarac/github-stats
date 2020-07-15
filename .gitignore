@@ -4,7 +4,8 @@ node_modules
 .eslintrc.js
 .browserslistrc
 .editorconfig
-
+vue.config.js
+deploy.sh
 
 # local env files
 .env.local
