@@ -30,7 +30,7 @@ export default {
 
 .container {
   height: 100vh;
-  width: 100vw;
+  width: 100%;
   display: flex;
   margin: 0 auto;
   justify-content: flex-start;
@@ -68,6 +68,10 @@ export default {
   font-size: 2rem;
 }
 
+.github-link a:hover {
+  border-bottom: 1px solid var(--accent-one-color);
+}
+
 .creation-date {
   color: var(--accent-one-color);
   font-size: 1.5rem;
@@ -77,14 +81,15 @@ export default {
 .basic-stat-container {
   height: 25%;
   width: 80%;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
+  display: grid;
+  grid-gap: 7rem;
+  grid-template-columns: repeat(3, minmax(10rem, 15rem));
+  justify-content: center;
 }
 
 .basic-stat-block {
   height: 100%;
-  width: 20%;
+  width: 18rem;
   border-radius: 1rem;
   background-color: var(--title-font-color);
   display: flex;
