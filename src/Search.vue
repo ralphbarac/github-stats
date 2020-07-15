@@ -52,7 +52,7 @@ export default {
 
 </script>
 
-<style>
+<style scoped>
 
   /* Animations*/
   .fade-enter {
@@ -108,6 +108,8 @@ export default {
 
   .title {
     font-size: 4rem;
+    color: var(--title-font-color);
+    border-bottom: 1px solid var(--accent-one-color);
   }
 
   .input-form-wrapper {
@@ -131,8 +133,12 @@ export default {
     height: 100%;
     width: 60%;
     padding-left: 0.3rem;
-    border-radius: 0.5rem;
     font-size: 2rem;
+    color: var(--main-bg-color);
+    font-weight: bold;
+    border-radius: 0.5rem;
+    border: 1px solid var(--accent-one-color);
+    background-color: var(--title-font-color);
   }
 
   .submit-input {
@@ -140,8 +146,11 @@ export default {
     margin-left: 0.5rem;
     padding: 0.3rem;
     border-radius: 0.5rem;
-    background-color: white;
+    border: 1px solid var(--accent-one-color);
+    background-color: var(--title-font-color);
     cursor: pointer;
+    color: var(--main-bg-color);
+    font-weight: bold;
   }
 
   .username-error {

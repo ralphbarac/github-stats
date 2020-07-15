@@ -81,7 +81,11 @@ export default {
 <style lang="scss">
 /* Variables */
   :root {
-    --main-bg-color: #d3d3d3;
+    --main-bg-color: #40b2a2;
+    --title-font-color: #7dc1ad;
+    --accent-one-color: #e8a87c;
+    --accent-two-color: #c38d9d;
+    --accent-three-color: #e27d60;
   }
  /* basic reset since some browsers add padding automatically */
   *,
@@ -90,7 +94,7 @@ export default {
     margin: 0;
     padding: 0;
     box-sizing: inherit;
-    font-family: sans-serif;
+    font-family: Montserrat, sans-serif;
   }
 
   /* setting a global font size at 10 so its easy to use rem later on,
