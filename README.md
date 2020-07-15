@@ -8,6 +8,6 @@ Back button on profile page
 
 Responsiveness
 
-Add repository charts/information (create component for this)
+Adding links from repo info card to either repository or deployment
 
 Add charts/information for basic profile stats

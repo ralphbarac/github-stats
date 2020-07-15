@@ -43,7 +43,6 @@ export default {
         url = 'https://api.github.com/users/' + this.username
         const responseRepos = await fetch(url)
         const userInfo = await responseRepos.json()
-        console.log(userInfo)
         eventBus.$emit('userDataInformation', userInfo)
       }
     }
@@ -109,7 +108,7 @@ export default {
   .title {
     font-size: 4rem;
     color: var(--title-font-color);
-    border-bottom: 1px solid var(--accent-one-color);
+    border-bottom: 1px solid var(--accent-three-color);
   }
 
   .input-form-wrapper {
@@ -134,10 +133,10 @@ export default {
     width: 60%;
     padding-left: 0.3rem;
     font-size: 2rem;
-    color: var(--main-bg-color);
+    color: var(--accent-three-color);
     font-weight: bold;
     border-radius: 0.5rem;
-    border: 1px solid var(--accent-one-color);
+    border: 1px solid var(--accent-three-color);
     background-color: var(--title-font-color);
   }
 
@@ -146,10 +145,10 @@ export default {
     margin-left: 0.5rem;
     padding: 0.3rem;
     border-radius: 0.5rem;
-    border: 1px solid var(--accent-one-color);
+    border: 1px solid var(--accent-three-color);
     background-color: var(--title-font-color);
     cursor: pointer;
-    color: var(--main-bg-color);
+    color: var(--accent-three-color);
     font-weight: bold;
   }
 

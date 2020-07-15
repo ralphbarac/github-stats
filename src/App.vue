@@ -2,7 +2,7 @@
   <div id="app">
     <div class="container">
       <gs-search v-if='!isSubmitted' :usernameError='usernameError'></gs-search>
-      <gs-profile :userData='userData' v-else></gs-profile>
+      <gs-profile :userData='userData' v-else-if='isSubmitted'></gs-profile>
     </div>
   </div>
 </template>
@@ -81,11 +81,11 @@ export default {
 <style lang="scss">
 /* Variables */
   :root {
-    --main-bg-color: #40b2a2;
-    --title-font-color: #7dc1ad;
-    --accent-one-color: #e8a87c;
-    --accent-two-color: #c38d9d;
-    --accent-three-color: #e27d60;
+    --main-bg-color: #5cdb95;
+    --title-font-color: #edf5e1;
+    --accent-one-color: #8ee4af;
+    --accent-two-color: #379683;
+    --accent-three-color: #05386b;
   }
  /* basic reset since some browsers add padding automatically */
   *,
