@@ -47,7 +47,7 @@ export default {
 }
 
 .nav {
-  width: 80vw;
+  width: 80%;
   display: flex;
 }
 
