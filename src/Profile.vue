@@ -37,7 +37,7 @@ export default {
 
 <style scoped>
 .user-account-overview {
-  height: 40rem;
+  height: 40%;
   margin-top: 8rem;
   text-align: center;
   display: flex;
@@ -93,12 +93,11 @@ export default {
 }
 
 .basic-stat-container {
-  height: 25%;
-  width: 80%;
-  display: grid;
-  grid-gap: 7rem;
-  grid-template-columns: repeat(3, minmax(10rem, 15rem));
-  justify-content: center;
+  height: 80%;
+  width: 30%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
 }
 
 .basic-stat-block {
@@ -106,13 +105,15 @@ export default {
   width: 18rem;
   border-radius: 1rem;
   background-color: var(--title-font-color);
-  border: 1px solid var(--accent-three-color);
+  border: 2px solid var(--accent-three-color);
   display: flex;
   flex-direction: column;
   justify-content: center;
+  margin-top: 2rem;
 }
 
 .stat-number {
+  margin-top: 1rem;
   font-size: 3rem;
   font-weight: bold;
   color: var(--accent-three-color);
@@ -120,5 +121,6 @@ export default {
 .stat-name {
   font-size: 2rem;
   color: var(--accent-three-color);
+  margin-bottom: 1rem;
 }
 </style>

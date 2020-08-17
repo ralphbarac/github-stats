@@ -101,12 +101,14 @@ export default {
   root fontsize for browsers is 16px and we want 10px, so we divide 10/16 and get 62.5% */
   html {
     font-size: 62.5%;
+    height: 100%;
   }
 
   body {
     box-sizing: border-box;
     margin: 0 auto;
     background-color: var(--main-bg-color);
+    height: 100%
   }
 
 </style>

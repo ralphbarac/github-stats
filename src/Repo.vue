@@ -39,6 +39,8 @@ export default {
   width: 80%;
   height: 10%;
   display: flex;
+  justify-content: center;
+  align-items: center;
   flex-direction: column;
 }
 
@@ -50,11 +52,11 @@ export default {
 }
 
 .repositories {
- display: grid;
- margin-bottom: 10vh;
- width: 100%;
- grid-template-columns: 1fr 1fr 1fr 1fr;
- grid-gap: 4rem;
+ display: flex;
+ justify-content: flex-start;
+ margin-bottom: 10rem;
+ width: 80%;
+ flex-wrap: wrap;
 }
 
 .repo-card {
@@ -65,6 +67,7 @@ export default {
   height: 18rem;
   width: 35rem;
   padding: 2rem;
+  margin: 2rem;
   display: flex;
   justify-content: space-between;
   flex-direction: column;
