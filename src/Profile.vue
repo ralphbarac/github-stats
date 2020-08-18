@@ -14,7 +14,7 @@
       <div class="basic-stat-block"><p class="stat-number">{{ userData.following }}</p><p class="stat-name">Following</p></div>
     </div>
   </div>
-  <gs-repo :repoData='userData.repositories'></gs-repo>
+  <gs-repo :userData='userData' :repoData='userData.repositories'></gs-repo>
 </div>
 </template>
 
@@ -73,7 +73,7 @@ export default {
   height: 12rem;
   width: 12rem;
   border-radius: 6rem;
-  border: 4px solid var(--accent-three-color);
+  border: 1px solid var(--accent-three-color);
 }
 
 .github-link a {
@@ -102,7 +102,7 @@ export default {
 
 .basic-stat-block {
   height: 100%;
-  width: 18rem;
+  min-width: 18rem;
   border-radius: 1rem;
   background-color: var(--title-font-color);
   border: 2px solid var(--accent-three-color);

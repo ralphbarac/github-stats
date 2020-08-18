@@ -5,7 +5,7 @@
     </div>
     <div class="input-form-wrapper">
     <form class="input-form">
-        <input type='text' class="username-input" v-model='username'>
+        <input type='text' placeholder="Enter a GitHub username to search..." class="username-input" v-model='username'>
         <button @click.prevent='fetchUserRepos' class="submit-input">Submit</button>
     </form>
     <transition name="slide">

@@ -11,33 +11,6 @@
 import { eventBus } from './main'
 
 export default {
-  computed: {
-    calcLanguagePerc: function () {
-      const languageArray = []
-      for (let i = 0; i < this.userData.repositories.length; i++) {
-        if (this.userData.repositories[i].language != null) {
-          languageArray.push(this.userData.repositories[i].language)
-        }
-      }
-      const languageDict = {}
-      for (let i = 0; i < languageArray.length; i++) {
-        if (languageDict[languageArray[i]] != null) {
-          languageDict[languageArray[i]] = languageDict[languageArray[i]] + 1
-        } else {
-          languageDict[languageArray[i]] = 1
-        }
-      }
-      // Now converting to percentages
-      let sum = 0
-      for (const key in languageDict) {
-        sum += parseFloat(languageDict[key])
-      }
-      for (const key in languageDict) {
-        languageDict[key] = (languageDict[key] / sum) * 100
-      }
-      return languageDict
-    }
-  },
   data: function () {
     return {
       userData: {
@@ -108,7 +81,8 @@ export default {
     box-sizing: border-box;
     margin: 0 auto;
     background-color: var(--main-bg-color);
-    height: 100%
+    height: 100%;
+    min-height: 100vh;
   }
 
 </style>

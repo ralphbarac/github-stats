@@ -13,26 +13,111 @@
         </div>
       </a>
     </div>
+      <h1 class="section-title">Statistics</h1>
+      <p class="section-description">The charts here are very much a WIP and as such may look poor in extreme cases (tons of repositories/languages). For an example of this you can search for: godotengine</p>
+      <div class="stats-container">
+        <div class="graph-container">
+          <h1 class="chart-title">Primary Language Distribution</h1>
+          <svg id="donut-chart" width="300" height ="300"></svg>
+        </div>
+      </div>
   </div>
 </div>
 </template>
 
 <script>
+
+import * as d3 from 'd3'
+
 export default {
+  methods: {
+    calcLanguagePerc: function () {
+      const languageArray = []
+      for (let i = 0; i < this.repoData.length; i++) {
+        if (this.repoData[i].language != null) {
+          languageArray.push(this.repoData[i].language)
+        }
+      }
+
+      const percentArray = []
+
+      const totalLangs = languageArray.length
+      const uniqueLangs = [...new Set(languageArray)]
+      uniqueLangs.forEach(currLang => {
+        const numLangs = languageArray.filter(languageArray => languageArray === currLang)
+        percentArray.push({ language: currLang, percent: (numLangs.length * 100 / totalLangs).toFixed(3) })
+      })
+
+      return percentArray
+    },
+    graph1: function () {
+      const svg = d3.select('#donut-chart')
+
+      const data = this.calcLanguagePerc()
+
+      const h = 300
+      const w = 300
+
+      const colours = d3.scaleOrdinal(data.map(d => d.language), d3.schemeSet1)
+
+      const arc = d3.arc()
+        .innerRadius(0.5 * h / 2)
+        .outerRadius(0.85 * h / 2)
+        .cornerRadius(5)
+
+      const pie = d3.pie()
+        .value(d => d.percent)
+
+      const pieArcs = pie(data)
+
+      const arcLabel = d3.arc()
+        .innerRadius(0.5 * h / 2)
+        .outerRadius(0.85 * h / 2)
+
+      svg.append('g')
+        .attr('transform', `translate(${w / 2}, ${h / 2})`)
+        .selectAll('path')
+        .data(pieArcs)
+        .join('path')
+        .style('stroke', 'white')
+        .style('stroke-width', 2)
+        .style('fill', d => colours(d.data.language))
+        .attr('d', arc)
+      svg.append('g')
+        .attr('text-anchor', 'middle')
+        .attr('transform', `translate(${w / 2}, ${h / 2})`)
+        .selectAll('text')
+        .data(pieArcs)
+        .join('text')
+        .attr('transform', d => `translate(${arcLabel.centroid(d)})`)
+        .attr('y', '-0.4em')
+        .attr('font-weight', 'bold')
+        .text(d => d.data.language)
+    }
+  },
+  beforeUpdate () {
+    this.graph1()
+  },
   props: {
     repoData: {
       type: Array
+    },
+    userData: {
+      type: Object
     }
   }
 }
 </script>
 
 <style scoped>
+
 .container {
   display: flex;
   justify-content: center;
   background-color: var(--title-font-color);
   margin-top: 5rem;
+  flex-direction: column;
+  align-items: center;
 }
 
 .section-repositories {
@@ -51,10 +136,21 @@ export default {
   margin-top: 3rem;
 }
 
+.section-description {
+  font-size: 1.5rem;
+  color: var(--accent-three-color);
+  margin-top: -5rem;
+  margin-bottom: 5rem;
+}
+
+.section-stats {
+  display: flex;
+  flex-direction: column;
+}
+
 .repositories {
  display: flex;
  justify-content: flex-start;
- margin-bottom: 10rem;
  width: 80%;
  flex-wrap: wrap;
 }
@@ -101,6 +197,23 @@ export default {
 
 .star-icon {
   margin-right: 2px;
+}
+
+.graph-container {
+  width: 40%;
+  height: 40%;
+}
+
+.stats-container {
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+}
+
+.chart-title {
+  font-size: 1.5rem;
+  color: var(--accent-three-color);
+  margin-left: 4rem;
 }
 
 </style>
