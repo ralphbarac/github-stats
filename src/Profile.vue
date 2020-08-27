@@ -42,7 +42,7 @@ export default {
   text-align: center;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
 }
 
@@ -56,11 +56,11 @@ export default {
   border: none;
   text-decoration: none;
   font-size: 2rem;
-  color: var(--title-font-color);
+  color: var(--accent-three-color);
 }
 
 .back-button:hover {
-  color: var(--accent-three-color);
+  color: var(--title-font-color);
   cursor: pointer;
 }
 
@@ -73,7 +73,7 @@ export default {
   height: 12rem;
   width: 12rem;
   border-radius: 6rem;
-  border: 1px solid var(--accent-three-color);
+  border: 3px solid var(--accent-three-color);
 }
 
 .github-link a {
@@ -84,32 +84,36 @@ export default {
 
 .github-link a:hover {
   border-bottom: 1px solid var(--accent-three-color);
+  text-decoration: none;
 }
 
 .creation-date {
-  color: var(--accent-three-color);
+  color: var(--accent-two-color);
   font-size: 1.5rem;
   font-weight: bold;
 }
 
 .basic-stat-container {
   height: 80%;
-  width: 30%;
+  width: 35%;
   display: flex;
+  flex-direction: row;
   flex-wrap: wrap;
-  justify-content: space-between;
+  justify-content: center;
 }
 
 .basic-stat-block {
   height: 100%;
   min-width: 18rem;
   border-radius: 1rem;
-  background-color: var(--title-font-color);
-  border: 2px solid var(--accent-three-color);
+  background-color: var(--main-bg-color);
+  border: 2px solid var(--title-font-color);
   display: flex;
   flex-direction: column;
   justify-content: center;
   margin-top: 2rem;
+  margin-left: 1rem;
+  margin-right: 1rem;
 }
 
 .stat-number {

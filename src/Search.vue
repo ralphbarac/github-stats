@@ -5,7 +5,7 @@
     </div>
     <div class="input-form-wrapper">
     <form class="input-form">
-        <input type='text' placeholder="Enter a GitHub username to search..." class="username-input" v-model='username'>
+        <input type='text' class="username-input" placeholder="Username" v-model='username'>
         <button @click.prevent='fetchUserRepos' class="submit-input">Submit</button>
     </form>
     <transition name="slide">
@@ -133,23 +133,25 @@ export default {
     width: 60%;
     padding-left: 0.3rem;
     font-size: 2rem;
-    color: var(--accent-three-color);
-    font-weight: bold;
+    color: var(--main-bg-color);
     border-radius: 0.5rem;
     border: 1px solid var(--accent-three-color);
-    background-color: var(--title-font-color);
+  }
+
+  .username-input::placeholder {
+    color: var(--main-bg-color);
   }
 
   .submit-input {
+    background-color: white;
     height: 100%;
+    font-size: 1.5rem;
     margin-left: 0.5rem;
     padding: 0.3rem;
     border-radius: 0.5rem;
     border: 1px solid var(--accent-three-color);
-    background-color: var(--title-font-color);
     cursor: pointer;
-    color: var(--accent-three-color);
-    font-weight: bold;
+    color: var(--main-bg-color);
   }
 
   .username-error {
@@ -157,5 +159,6 @@ export default {
     margin-top: 8rem;
     color: white;
     font-size: 2rem;
+    font-weight: normal;
   }
 </style>

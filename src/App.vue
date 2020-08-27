@@ -54,11 +54,11 @@ export default {
 <style lang="scss">
 /* Variables */
   :root {
-    --main-bg-color: #5cdb95;
-    --title-font-color: #edf5e1;
-    --accent-one-color: #8ee4af;
-    --accent-two-color: #379683;
-    --accent-three-color: #05386b;
+    --main-bg-color: #303c6c;
+    --title-font-color: #f4976c;
+    --accent-one-color: #fbe8a6;
+    --accent-two-color: #b4dfe5;
+    --accent-three-color: #d2fdff;
   }
  /* basic reset since some browsers add padding automatically */
   *,

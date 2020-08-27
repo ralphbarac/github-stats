@@ -14,12 +14,18 @@
       </a>
     </div>
       <h1 class="section-title">Statistics</h1>
-      <p class="section-description">The charts here are very much a WIP and as such may look poor in extreme cases (tons of repositories/languages). For an example of this you can search for: godotengine</p>
+      <p class="section-description">The charts here are very much a WIP and being built with d3js.</p>
       <div class="stats-container">
         <div class="graph-container">
           <h1 class="chart-title">Primary Language Distribution</h1>
           <svg id="donut-chart" width="300" height ="300"></svg>
         </div>
+        <!--
+        <div class="graph-container">
+          <h1 class="chart-title">Most Starred Repositories</h1>
+          <svg id="bar-chart" width="300" height ="300"></svg>
+        </div>
+        -->
       </div>
   </div>
 </div>
@@ -58,7 +64,7 @@ export default {
       const h = 300
       const w = 300
 
-      const colours = d3.scaleOrdinal(data.map(d => d.language), d3.schemeSet1)
+      const colours = d3.scaleOrdinal(data.map(d => d.language), d3.schemeSet3)
 
       const arc = d3.arc()
         .innerRadius(0.5 * h / 2)
@@ -79,8 +85,8 @@ export default {
         .selectAll('path')
         .data(pieArcs)
         .join('path')
-        .style('stroke', 'white')
-        .style('stroke-width', 2)
+        .style('stroke', '#3036c6')
+        .style('stroke-width', 1)
         .style('fill', d => colours(d.data.language))
         .attr('d', arc)
       svg.append('g')
@@ -93,10 +99,58 @@ export default {
         .attr('y', '-0.4em')
         .attr('font-weight', 'bold')
         .text(d => d.data.language)
+    },
+    graph2: function () {
+      const margin = 30
+      const width = 250
+      const height = 250
+
+      const svg = d3.select('#bar-chart')
+
+      const dataUnfiltered = []
+      const data = []
+
+      this.repoData.forEach(repo => dataUnfiltered.push({ name: repo.name, stars: repo.stargazers_count }))
+
+      dataUnfiltered.sort(function (a, b) { return b.stars - a.stars })
+
+      for (let i = 0; i < 5; ++i) {
+        data.push(dataUnfiltered[i])
+      }
+
+      let maxStars = 0
+      data.forEach(el => {
+        if (el.stars > maxStars) {
+          maxStars = el.stars
+        }
+      })
+
+      const yScale = d3.scaleLinear()
+        .range([height, 0])
+        .domain([0, maxStars])
+
+      const yAxis = d3.axisLeft(yScale)
+        .ticks(5, 'f')
+
+      const xScale = d3.scaleBand()
+        .range([0, width])
+        .domain(data.map(s => s.name))
+
+      svg.append('g')
+        .attr('transform', `translate(${margin}, ${margin})`)
+        .call(yAxis)
+
+      svg.append('g')
+        .attr('transform', `translate(${margin}, ${height + 30})`)
+        .call(d3.axisBottom(xScale))
+        .selectAll('text')
+        .style('text-anchor', 'start')
+        .attr('transform', 'rotate(90)')
     }
   },
   beforeUpdate () {
     this.graph1()
+    this.graph2()
   },
   props: {
     repoData: {
@@ -114,7 +168,7 @@ export default {
 .container {
   display: flex;
   justify-content: center;
-  background-color: var(--title-font-color);
+  background-color: var(--accent-three-color);
   margin-top: 5rem;
   flex-direction: column;
   align-items: center;
@@ -131,14 +185,14 @@ export default {
 
 .section-title {
   font-size: 2.5rem;
-  color: var(--accent-three-color);
+  color: var(--main-bg-color);
   margin-bottom: 7rem;
   margin-top: 3rem;
 }
 
 .section-description {
   font-size: 1.5rem;
-  color: var(--accent-three-color);
+  color: var(--main-bg-color);
   margin-top: -5rem;
   margin-bottom: 5rem;
 }
@@ -150,13 +204,12 @@ export default {
 
 .repositories {
  display: flex;
- justify-content: flex-start;
- width: 80%;
+ justify-content: center;
+ width: 100%;
  flex-wrap: wrap;
 }
 
 .repo-card {
-  border: 1px solid var(--accent-three-color);
   -webkit-box-shadow: 10px 12px 17px -7px rgba(5,56,107,1);
   -moz-box-shadow: 10px 12px 17px -7px rgba(5,56,107,1);
   box-shadow: 10px 12px 17px -7px rgba(5,56,107,1);
@@ -167,9 +220,10 @@ export default {
   display: flex;
   justify-content: space-between;
   flex-direction: column;
-  color: var(--accent-three-color);
+  color: var(--main-bg-color);
   text-decoration: none;
   cursor: pointer;
+  border: 1px solid var(--main-bg-color)
 }
 
 .repo-card-name {
@@ -199,21 +253,22 @@ export default {
   margin-right: 2px;
 }
 
-.graph-container {
-  width: 40%;
-  height: 40%;
-}
-
 .stats-container {
   display: flex;
   width: 100%;
+  justify-content: space-around;
   flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.graph-container {
+  margin-bottom: 3rem;
 }
 
 .chart-title {
+  text-align: center;
   font-size: 1.5rem;
-  color: var(--accent-three-color);
-  margin-left: 4rem;
+  color: var(--main-bg-color);
 }
 
 </style>
