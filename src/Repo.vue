@@ -14,7 +14,7 @@
       </a>
     </div>
       <h1 class="section-title">Statistics</h1>
-      <p class="section-description">The charts here are very much a WIP and being built with d3js.</p>
+      <p class="section-description">Due to the high potential number of elements some of these graphs may have, I decided to go with hover effects to display data (to remove the need for legends with 20-30 elements).</p>
       <div class="stats-container">
         <div class="graph-container">
           <h1 class="chart-title">Primary Language Distribution</h1>
@@ -51,7 +51,7 @@ export default {
       const uniqueLangs = [...new Set(languageArray)]
       uniqueLangs.forEach(currLang => {
         const numLangs = languageArray.filter(languageArray => languageArray === currLang)
-        percentArray.push({ language: currLang, percent: (numLangs.length * 100 / totalLangs).toFixed(3) })
+        percentArray.push({ language: currLang, percent: (numLangs.length * 100 / totalLangs).toFixed(2) })
       })
 
       return percentArray
@@ -61,10 +61,12 @@ export default {
 
       const data = this.calcLanguagePerc()
 
+      data.sort(function (a, b) { return b.percent - a.percent })
+
       const h = 300
       const w = 300
 
-      const colours = d3.scaleOrdinal(data.map(d => d.language), d3.schemeSet3)
+      const colours = d3.scaleOrdinal(data.map(d => d.language), d3.schemeCategory10)
 
       const arc = d3.arc()
         .innerRadius(0.5 * h / 2)
@@ -76,10 +78,6 @@ export default {
 
       const pieArcs = pie(data)
 
-      const arcLabel = d3.arc()
-        .innerRadius(0.5 * h / 2)
-        .outerRadius(0.85 * h / 2)
-
       svg.append('g')
         .attr('transform', `translate(${w / 2}, ${h / 2})`)
         .selectAll('path')
@@ -89,45 +87,55 @@ export default {
         .style('stroke-width', 1)
         .style('fill', d => colours(d.data.language))
         .attr('d', arc)
-      svg.append('g')
-        .attr('text-anchor', 'middle')
-        .attr('transform', `translate(${w / 2}, ${h / 2})`)
-        .selectAll('text')
+        .on('mouseenter', function (d, i) {
+          const lang = d.data.language
+          const percent = d.data.percent
+          d3.select('circle').transition()
+            .style('fill', d => colours(lang))
+            .duration(50)
+          d3.select('g')
+            .append('text')
+            .style('font-size', '2rem')
+            .style('fill', d => colours(lang))
+            .attr('text-anchor', 'middle')
+            .style('font-weight', 'bold')
+            .text(lang)
+          d3.select('g')
+            .append('text')
+            .style('font-size', '1.5rem')
+            .attr('y', 30)
+            .style('fill', d => colours(lang))
+            .attr('text-anchor', 'middle')
+            .style('font-weight', 'bold')
+            .text(percent + '%')
+        })
+        .on('mouseout', function (d, i) {
+          d3.select('circle').transition()
+            .style('fill', '#d2fdff')
+            .duration(50)
+          d3.selectAll('text').remove()
+        })
+
+      svg.append('circle')
         .data(pieArcs)
-        .join('text')
-        .attr('transform', d => `translate(${arcLabel.centroid(d)})`)
-        .attr('y', '-0.4em')
-        .attr('font-weight', 'bold')
-        .text(d => d.data.language)
+        .attr('cx', w / 2)
+        .attr('cy', h / 2)
+        .attr('r', 0.5 * h / 2)
+        .style('fill', '#d2fdff')
+        .attr('opacity', 0.65)
     },
     graph2: function () {
+      /*
       const margin = 30
       const width = 250
       const height = 250
 
       const svg = d3.select('#bar-chart')
 
-      const dataUnfiltered = []
       const data = []
+      this.repoData.forEach(repo => data.push({ name: repo.name, stars: repo.stargazers_count }))
 
-      this.repoData.forEach(repo => dataUnfiltered.push({ name: repo.name, stars: repo.stargazers_count }))
-
-      dataUnfiltered.sort(function (a, b) { return b.stars - a.stars })
-
-      for (let i = 0; i < 5; ++i) {
-        data.push(dataUnfiltered[i])
-      }
-
-      let maxStars = 0
-      data.forEach(el => {
-        if (el.stars > maxStars) {
-          maxStars = el.stars
-        }
-      })
-
-      const yScale = d3.scaleLinear()
-        .range([height, 0])
-        .domain([0, maxStars])
+      data.sort(function (a, b) { return b.stars - a.stars })
 
       const yAxis = d3.axisLeft(yScale)
         .ticks(5, 'f')
@@ -146,11 +154,11 @@ export default {
         .selectAll('text')
         .style('text-anchor', 'start')
         .attr('transform', 'rotate(90)')
+        */
     }
   },
   beforeUpdate () {
     this.graph1()
-    this.graph2()
   },
   props: {
     repoData: {
@@ -176,9 +184,7 @@ export default {
 
 .section-repositories {
   width: 80%;
-  height: 10%;
   display: flex;
-  justify-content: center;
   align-items: center;
   flex-direction: column;
 }

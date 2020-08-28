@@ -10,6 +10,7 @@
     </form>
     <transition name="slide">
         <h3 class="username-error" v-if='usernameError'>Sorry, that username does not exist or has no public repositories.</h3>
+        <h3 class="rate-limit-error" v-if='rateLimitError'>GitHub rate limit exceeded. Try again later.</h3>
     </transition>
     </div>
 </div>
@@ -21,6 +22,9 @@ import { eventBus } from './main'
 export default {
   props: {
     usernameError: {
+      type: Boolean
+    },
+    rateLimitError: {
       type: Boolean
     }
   },
@@ -34,7 +38,11 @@ export default {
       let url = 'https://api.github.com/users/' + this.username + '/repos'
       const response = await fetch(url)
       if (!response.ok) {
-        eventBus.$emit('userSearchError', true)
+        if (response.status === 403) {
+          eventBus.$emit('rateLimitError', true)
+        } else {
+          eventBus.$emit('userSearchError', true)
+        }
         return null
       } else {
         eventBus.$emit('submitChange', [true, this.username])
@@ -158,6 +166,14 @@ export default {
     width: 36%;
     margin-top: 8rem;
     color: white;
+    font-size: 2rem;
+    font-weight: normal;
+  }
+
+  .rate-limit-error {
+    width: 39%;
+    margin-top: 12rem;
+    color: var(--title-font-color);
     font-size: 2rem;
     font-weight: normal;
   }

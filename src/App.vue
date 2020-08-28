@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div class="container">
-      <gs-search v-if='!isSubmitted' :usernameError='usernameError'></gs-search>
+      <gs-search v-if='!isSubmitted' :usernameError='usernameError' :rateLimitError='rateLimitError'></gs-search>
       <gs-profile :userData='userData' v-else-if='isSubmitted'></gs-profile>
     </div>
   </div>
@@ -23,12 +23,17 @@ export default {
         following: null
       },
       isSubmitted: false,
-      usernameError: false
+      usernameError: false,
+      rateLimitError: false
     }
   },
   created () {
     eventBus.$on('userSearchError', (bool) => {
       this.usernameError = bool
+    })
+
+    eventBus.$on('rateLimitError', (bool) => {
+      this.rateLimitError = bool
     })
 
     eventBus.$on('submitChange', (array) => {
