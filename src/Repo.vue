@@ -14,18 +14,16 @@
       </a>
     </div>
       <h1 class="section-title">Statistics</h1>
-      <p class="section-description">Due to the high potential number of elements some of these graphs may have, I decided to go with hover effects to display data (to remove the need for legends with 20-30 elements).</p>
+      <p class="section-description">Due to the high potential number of elements some of these graphs may have, I decided to go with hover effects to display data (to remove the need for legends with 20-30 elements). I understand that at a glance these visualizations are not ideal for actually displaying data, they are mostly for me to learn the ropes of d3js (data binding, animations, etc). </p>
       <div class="stats-container">
         <div class="graph-container">
           <h1 class="chart-title">Primary Language Distribution</h1>
-          <svg id="donut-chart" width="300" height ="300"></svg>
+          <svg id="donut-chart" width="500" height ="500"></svg>
         </div>
-        <!--
         <div class="graph-container">
-          <h1 class="chart-title">Most Starred Repositories</h1>
-          <svg id="bar-chart" width="300" height ="300"></svg>
+          <h1 class="chart-title">Top 5 Starred Repos</h1>
+          <svg id="bar-chart" width="500" height ="700"></svg>
         </div>
-        -->
       </div>
   </div>
 </div>
@@ -44,9 +42,7 @@ export default {
           languageArray.push(this.repoData[i].language)
         }
       }
-
       const percentArray = []
-
       const totalLangs = languageArray.length
       const uniqueLangs = [...new Set(languageArray)]
       uniqueLangs.forEach(currLang => {
@@ -56,6 +52,13 @@ export default {
 
       return percentArray
     },
+    calcStarRepos: function () {
+      const starArray = []
+      for (let i = 0; i < this.repoData.length; i++) {
+        starArray.push({ name: this.repoData[i].name, stars: this.repoData[i].stargazers_count })
+      }
+      return starArray.sort((a, b) => (b.stars - a.stars)).slice(0, 5)
+    },
     graph1: function () {
       const svg = d3.select('#donut-chart')
 
@@ -63,8 +66,8 @@ export default {
 
       data.sort(function (a, b) { return b.percent - a.percent })
 
-      const h = 300
-      const w = 300
+      const h = 500
+      const w = 500
 
       const colours = d3.scaleOrdinal(data.map(d => d.language), d3.schemeCategory10)
 
@@ -95,14 +98,14 @@ export default {
             .duration(50)
           d3.select('g')
             .append('text')
-            .style('font-size', '2rem')
             .style('fill', d => colours(lang))
             .attr('text-anchor', 'middle')
             .style('font-weight', 'bold')
+            .style('font-size', '4em')
             .text(lang)
           d3.select('g')
             .append('text')
-            .style('font-size', '1.5rem')
+            .style('font-size', '1.5em')
             .attr('y', 30)
             .style('fill', d => colours(lang))
             .attr('text-anchor', 'middle')
@@ -113,7 +116,7 @@ export default {
           d3.select('circle').transition()
             .style('fill', '#d2fdff')
             .duration(50)
-          d3.selectAll('text').remove()
+          svg.selectAll('text').remove()
         })
 
       svg.append('circle')
@@ -125,40 +128,80 @@ export default {
         .attr('opacity', 0.65)
     },
     graph2: function () {
-      /*
-      const margin = 30
-      const width = 250
-      const height = 250
+      const data = this.calcStarRepos()
+
+      const h = 450
+      const w = 450
+
+      const margin = { top: 20, right: 0, bottom: 30, left: 50 }
+
+      const x = d3.scaleBand()
+        .domain(d3.range(data.length))
+        .range([margin.left, w - margin.right])
+        .padding(0.1)
+
+      const y = d3.scaleLinear()
+        .domain([0, d3.max(data, d => d.stars)]).nice()
+        .range([h - margin.bottom, margin.top])
+
+      const yAxis = g => g
+        .attr('transform', `translate(${margin.left}, 0)`)
+        .call(d3.axisLeft(y))
+        .attr('text-anchor', 'end')
+
+      const xAxis = g => g
+        .attr('transform', `translate(0, ${h - margin.bottom})`)
+        .call(d3.axisBottom(x).tickFormat(i => data[i].name).tickSizeOuter(0))
+        .selectAll('text')
+        .attr('transform', 'rotate(90)')
+        .attr('text-anchor', 'start')
+        .attr('dy', '-0.6em')
+        .attr('dx', '1em')
 
       const svg = d3.select('#bar-chart')
 
-      const data = []
-      this.repoData.forEach(repo => data.push({ name: repo.name, stars: repo.stargazers_count }))
-
-      data.sort(function (a, b) { return b.stars - a.stars })
-
-      const yAxis = d3.axisLeft(yScale)
-        .ticks(5, 'f')
-
-      const xScale = d3.scaleBand()
-        .range([0, width])
-        .domain(data.map(s => s.name))
+      svg.append('g')
+        .attr('fill', '#3036C6')
+        .selectAll('rect')
+        .data(data)
+        .join('rect')
+        .attr('x', (d, i) => x(i))
+        .attr('y', d => y(d.stars))
+        .attr('height', d => y(0) - y(d.stars))
+        .attr('width', x.bandwidth())
+        .on('mouseenter', function (d, i) {
+          const data = d.stars
+          d3.select(this).transition()
+            .attr('fill', '#fbe8a6')
+            .duration(50)
+          svg.select('g')
+            .append('text')
+            .attr('class', 'number')
+            .style('font-size', '2em')
+            .attr('text-anchor', 'middle')
+            .style('font-weight', 'bold')
+            .style('fill', '#303c6c')
+            .attr('x', (i * 80) + 90)
+            .attr('y', d => y(data) - 10)
+            .text(d.stars)
+        })
+        .on('mouseout', function (d, i) {
+          d3.select(this).transition()
+            .attr('fill', '#3036C6')
+            .duration(50)
+          svg.select('g').selectAll('text').remove()
+        })
 
       svg.append('g')
-        .attr('transform', `translate(${margin}, ${margin})`)
+        .call(xAxis)
+
+      svg.append('g')
         .call(yAxis)
-
-      svg.append('g')
-        .attr('transform', `translate(${margin}, ${height + 30})`)
-        .call(d3.axisBottom(xScale))
-        .selectAll('text')
-        .style('text-anchor', 'start')
-        .attr('transform', 'rotate(90)')
-        */
     }
   },
-  beforeUpdate () {
+  mounted () {
     this.graph1()
+    this.graph2()
   },
   props: {
     repoData: {

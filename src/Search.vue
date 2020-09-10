@@ -1,23 +1,23 @@
 <template>
 <div class="container">
     <div class="header">
-        <h1 class="title">Github Stats</h1>
+        <h1 class="title">GitHub Stats</h1>
     </div>
     <div class="input-form-wrapper">
     <form class="input-form">
         <input type='text' class="username-input" placeholder="Username" v-model='username'>
-        <button @click.prevent='fetchUserRepos' class="submit-input">Submit</button>
+        <button @click.prevent='fetchAndCache' class="submit-input">Submit</button>
     </form>
     <transition name="slide">
         <h3 class="username-error" v-if='usernameError'>Sorry, that username does not exist or has no public repositories.</h3>
-        <h3 class="rate-limit-error" v-if='rateLimitError'>GitHub rate limit exceeded. Try again later.</h3>
+        <h3 class="rate-limit-error" v-if='rateLimitError'>GitHub rate limit exceeded.</h3>
     </transition>
     </div>
 </div>
 </template>
 
 <script>
-import { eventBus } from './main'
+import { eventBus, cacheName } from './main'
 
 export default {
   props: {
@@ -34,25 +34,57 @@ export default {
     }
   },
   methods: {
-    async fetchUserRepos () {
+    async fetchAndCache () {
       let url = 'https://api.github.com/users/' + this.username + '/repos'
-      const response = await fetch(url)
-      if (!response.ok) {
-        if (response.status === 403) {
-          eventBus.$emit('rateLimitError', true)
-        } else {
-          eventBus.$emit('userSearchError', true)
+      caches.open(cacheName).then(async cache => {
+        const data = await cache.match(url).then(async res => {
+          if (res === undefined) {
+            const response = await fetch(url)
+            if (!response.ok) {
+              if (response.status === 403) {
+                eventBus.$emit('rateLimitError', true)
+                return 'Error'
+              } else {
+                eventBus.$emit('userSearchError', true)
+                return 'Error'
+              }
+            } else {
+              cache.put(url, await response.clone())
+              return await response.clone().json()
+            }
+          } else {
+            return await res.clone().json()
+          }
+        })
+        if (data !== 'Error') {
+          eventBus.$emit('repos', data)
+          url = 'https://api.github.com/users/' + this.username
+          const userData = await cache.match(url).then(async res => {
+            if (res === undefined) {
+              const response = await fetch(url)
+              cache.put(url, await response.clone())
+              return await response.clone().json()
+            } else {
+              return await res.clone().json()
+            }
+          })
+          data.forEach(async repo => {
+            const url = repo.languages_url
+            const langData = await cache.match(url).then(async res => {
+              if (res === undefined) {
+                const response = await fetch(url)
+                cache.put(url, await response.clone())
+                return await response.clone().json()
+              } else {
+                return await res.clone().json()
+              }
+            })
+            eventBus.$emit('langData', langData)
+          })
+          eventBus.$emit('userDataInformation', userData)
+          eventBus.$emit('submitChange', [true, this.username])
         }
-        return null
-      } else {
-        eventBus.$emit('submitChange', [true, this.username])
-        const repositories = await response.json()
-        eventBus.$emit('repos', repositories)
-        url = 'https://api.github.com/users/' + this.username
-        const responseRepos = await fetch(url)
-        const userInfo = await responseRepos.json()
-        eventBus.$emit('userDataInformation', userInfo)
-      }
+      })
     }
   }
 }

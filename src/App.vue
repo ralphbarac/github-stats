@@ -19,6 +19,7 @@ export default {
         joinDate: '',
         profileImage: '',
         repositories: [],
+        langData: [],
         followers: null,
         following: null
       },
@@ -43,6 +44,10 @@ export default {
 
     eventBus.$on('repos', (repositories) => {
       this.userData.repositories = repositories
+    })
+
+    eventBus.$on('langData', (data) => {
+      this.userData.langData.push(data)
     })
 
     eventBus.$on('userDataInformation', (data) => {

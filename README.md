@@ -1,6 +1,8 @@
 # github-stats
 
-This is a simple web-app that allows people to search GitHub users and get a brief overview of their account information as well as an overview of their most used languages and brief overviews on the users public repositories.
+This is a simple web-app that allows people to search GitHub users and get a brief overview of their account information, repository information, and some basic statistics.
+
+Technologies used: VueJS, d3js
 
 ## Deployment Link
 
@@ -8,10 +10,9 @@ https://ralphbarac.github.io/github-stats/
 
 ## To Dos (no particular order)
 
-Back button on profile page
-
-Responsiveness
+Sunburst diagram with repo language breakdowns
 
 Adding links from repo info card to either repository or deployment
 
-Add charts/information for basic profile stats
+Implement caching to help deal with the rate limit
+
